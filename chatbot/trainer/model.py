@@ -6,80 +6,35 @@ import numpy as np
 import tensorflow as tf
 import re
 import time
-import io
+import pandas as pd
+from tensorflow.python.lib.io import file_io
+from pandas.compat import BytesIO
+
+def read_data(gcs_path):
+   print('downloading csv file from', gcs_path)     
+   file_stream = file_io.FileIO(gcs_path, mode='r')
+   data = pd.read_csv(BytesIO(file_stream.read()), header=None)
+   return data
 
 
+questions_l = read_data('gs://chatbot-mlengine/data/questions.csv')
+answers_l = read_data('gs://chatbot-mlengine/data/answers.csv')
 
 
-############################################################ PART 1 - DATA PREPROCESSING ########################################
-
-
-
-# Importing the dataset https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
-
-## Actual conversations       # avoid import error
-# lines = open('/home/lucasmalucha/ChatBot-master/chatbot/movie_lines.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
-with io.open('/home/lucasmalucha/ChatBot-master/chatbot/movie_lines.txt', encoding = 'utf-8', errors='ignore') as source:
-    lines = source.read().split('\n')
-
-
-## list of converstions per movie
-# conversations = open('/home/lucasmalucha/ChatBot-master/chatbot/movie_conversations.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
-with io.open('/home/lucasmalucha/ChatBot-master/chatbot/movie_conversations.txt', encoding = 'utf-8', errors='ignore') as source:
-    conversations = source.read().split('\n')
-
-
-
-# Dictionary that maps each movie line with its id #############################
-
-#FROM:
-#  1           2         3          4           5   
-#L254 +++$+++ u5 +++$+++ m0 +++$+++ KAT +++$+++ If I was Bianca, it would be, "Any school you want, precious.  Don't forget your tiara."
-#L253 +++$+++ u6 +++$+++ m0 +++$+++ MANDELLA +++$+++ Does it matter?
-#L252 +++$+++ u5 +++$+++ m0 +++$+++ KAT +++$+++ I appreciate your efforts toward a speedy death, but I'm consuming.  Do you mind?
-#L251 +++$+++ u5 +++$+++ m0 +++$+++ KAT +++$+++ Neither has his heterosexuality.
-#L250 +++$+++ u6 +++$+++ m0 +++$+++ MANDELLA +++$+++ That's never been proven   
-
-#TO: 
-
-#L10000 {Oh... chamber runs.  Uh huh, that's good.  Well, hey... you guys know any songs?}
-
-
-
-id2line = {}
-for line in lines:
-        _line = line.split(' +++$+++ ')                    ## _ for local variable in the loop
-        if len(_line) == 5:                                ## Make sure that line has 5 elements to avoid shifting issue
-                id2line[_line[0]] = _line[4]               ## maps each sentence with id
-
-
-
-# Creating a list of conversations #############################################
-
-#FROM:
-# u0 +++$+++ u2 +++$+++ m0 +++$+++ ['L194', 'L195', 'L196', 'L197']     
-                
-#TO:                
-# ['L194', 'L195', 'L196', 'L197']                
-conversations_ids = []
-for conversation in conversations[:-1]:
-###                                              remove sqare brackets | remove quotes | remove empty space    
-        _conversation = conversation.split(' +++$+++ ')[-1][1:-1].replace("'", "").replace(" ", "")  
-        conversations_ids.append(_conversation.split(','))
-        
-        
-        
-# Separating Questions & Answers. Making sure that lists are same size #########
-
+list_q =  questions_l.values.tolist()
 questions = []
+for element in list_q:
+    row = ''.join(element)
+    questions.append(row)
+    
+list_a = answers_l.values.tolist()
 answers = []
-for conversation in conversations_ids:
-        for i in range(len(conversation) - 1):
-                questions.append(id2line[conversation[i]])  ## first line to questions list
-                answers.append(id2line[conversation[i+1]])  ## second line to answers list
-               
-                
-                
+for element in list_a:
+    row = ''.join(element)
+    answers.append(row)
+
+
+
 # Text Cleaning - Step 1########################################################
  
 def clean_text(text):
@@ -552,49 +507,7 @@ for epoch in range(1, epochs + 1):
                 print("My apologies, I cannot speak better anymore. This is the best I can do.")
                 break
 print("Game Over")          
-                        
-        
-######################################################## PART 4 - TESTING THE SEQ2SEQ MODEL ############################################        
-        
-        
-# ### Loading weights and running session
-# checkpoint = './chatbot_weights.ckpt'
-# session = tf.InteractiveSession()
-# session.run(tf.global_variables_initializer())
-# saver = tf.train.Saver()
-# saver.restore(session, checkpoint)        
 
-# ### Converting the questions from strings to list of encoding integers
-# def convert_string2int(question, word2int):
-#         question = clean_text(question)
-#         return [word2int.get(word, word2int['<OUT>']) for word in question.split()]
-        
-# ### Setting up Chat
-# while(True):
-#     question = input("You: ")
-#     if question == 'Goodbye':
-#         break
-#     question = convert_string2int(question, questionswords2int)
-#     question = question + [questionswords2int['<PAD>']] * (25 - len(question))
-#     fake_batch = np.zeros((batch_size, 25))
-#     fake_batch[0] = question
-#     predicted_answer = session.run(test_predictions, {inputs: fake_batch, keep_prob: 0.5})[0]
-#     answer = ''
-#     for i in np.argmax(predicted_answer, 1):
-#         if answersint2word[i] == 'i':
-#             token = ' I'
-#         elif answersint2word[i] == '<EOS>':
-#             token = '.'
-#         elif answersint2word[i] == '<OUT>':
-#             token = 'out'
-#         elif answersint2word[i] == '<PAD>':   
-#             token = ''
-#         else:
-#             token = ' ' + answersint2word[i]
-#         answer += token
-#         if token == '.':
-#             break
-#     print('ChatBot: ' + answer)
         
         
         

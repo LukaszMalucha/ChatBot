@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-REQUIRED_PACKAGES = ['tensorflow','numpy']
+REQUIRED_PACKAGES = ['tensorflow','numpy', 'pandas']
 
 ## Setup Params for GCloud ML Engine - keras has to be mentioned, otherwise it'll say 'can't find keras'
 
