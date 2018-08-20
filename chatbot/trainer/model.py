@@ -19,12 +19,12 @@ import io
 # Importing the dataset https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
 
 ## Actual conversations       # avoid import error
-with io.open('movie_lines.txt', encoding = 'utf-8', errors='ignore') as source:
+with io.open('./movie_lines.txt', encoding = 'utf-8', errors='ignore') as source:
     lines = source.read().split('\n')
 
 ## list of converstions per movie
 conversations = open('movie_conversations.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
-with io.open('movie_conversations.txt', encoding = 'utf-8', errors='ignore') as source:
+with io.open('./movie_conversations.txt', encoding = 'utf-8', errors='ignore') as source:
     conversations = source.read().split('\n')
 
 
