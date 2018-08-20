@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 import re
 import time
+import io
 
 
 
@@ -17,10 +18,15 @@ import time
 # Importing the dataset https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html
 
 ## Actual conversations       # avoid import error
-lines = open('/home/lucasmalucha/ChatBot-master/chatbot/movie_lines.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
+# lines = open('/home/lucasmalucha/ChatBot-master/chatbot/movie_lines.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
+with io.open('/home/lucasmalucha/ChatBot-master/chatbot/movie_lines.txt', encoding = 'utf-8', errors='ignore') as source:
+    lines = source.read().split('\n')
+
 
 ## list of converstions per movie
-conversations = open('/home/lucasmalucha/ChatBot-master/chatbot/movie_conversations.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
+# conversations = open('/home/lucasmalucha/ChatBot-master/chatbot/movie_conversations.txt', encoding = 'utf-8', errors = 'ignore').read().split('\n')
+with io.open('/home/lucasmalucha/ChatBot-master/chatbot/movie_conversations.txt', encoding = 'utf-8', errors='ignore') as source:
+    conversations = source.read().split('\n')
 
 
 
