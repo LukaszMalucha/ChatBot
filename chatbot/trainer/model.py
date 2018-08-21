@@ -9,6 +9,7 @@ import time
 import pandas as pd
 from tensorflow.python.lib.io import file_io
 from pandas.compat import BytesIO
+import os
 
 def read_data(gcs_path):
    print('downloading csv file from', gcs_path)     
@@ -450,9 +451,7 @@ total_training_loss_error = 0
 list_validation_loss_error = []
 early_stopping_check = 0
 early_stopping_stop = 100
-checkpoint = "~/chatbot_weights.ckpt" # For Windows users, replace this line of code by: checkpoint = "./chatbot_weights.ckpt"
-
-
+checkpoint = "chatbot_weights.ckpt"
 
 
 session.run(tf.global_variables_initializer())
