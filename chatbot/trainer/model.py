@@ -452,9 +452,9 @@ early_stopping_check = 0
 early_stopping_stop = 100
 # checkpoint = "chatbot_weights.ckpt" # For Windows users, replace this line of code by: checkpoint = "./chatbot_weights.ckpt"
 
-# with file_io.FileIO('chatbot_weights.ckpt', mode='r+') as input_f:
-with file_io.FileIO('gs://chatbot-mlengine/data/chatbot_weights.ckpt', mode='w+') as f:
-    checkpoint = f
+with file_io.FileIO('chatbot_weights.ckpt', mode='r+') as input_f:
+    with file_io.FileIO('gs://chatbot-mlengine/data/chatbot_weights.ckpt', mode='w+') as output_f:
+        output_f.write(input_f.read())
 
 
 
